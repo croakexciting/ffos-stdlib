@@ -25,7 +25,7 @@ pub fn init_heap(size: usize) {
 #[no_mangle]
 #[link_section = ".text.entry"]
 pub extern "C" fn _start() -> ! {
-    init_heap(4096 * 2);
+    init_heap(4096 * 32);
     exit(main());
     panic!("unreachable after sys_exit!");
 }
