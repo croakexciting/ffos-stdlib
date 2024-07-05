@@ -6,7 +6,12 @@ use core::{arch::asm, usize};
 // use linux syscall id
 const SYSCALL_READ: usize = 0;
 const SYSCALL_WRITE: usize = 1;
+const SYSCALL_OPEN: usize = 2;
+const SYSCALL_CLOSE: usize = 3;
+const SYSCALL_LSEEK: usize = 4;
 const SYSCALL_MMAP: usize = 9;
+const SYSCALL_UMMAP: usize = 10;
+const SYSCALL_MMAP_WITH_ADDR: usize = 11;
 const SYSCALL_SIGACTION: usize = 13;
 const SYSCALL_SIGPROCMASK: usize = 14;
 const SYSCALL_SIGRETURN: usize = 15;
@@ -14,9 +19,9 @@ const SYSCALL_PIPE: usize = 22;
 const SYSCALL_YIELD: usize = 24;
 const SYSCALL_NANOSLEEP: usize = 35;
 const SYSCALL_GETPID: usize = 39;
-const SYSCALL_EXIT: usize = 60;
 const SYSCALL_FORK: usize = 57;
 const SYSCALL_EXEC: usize = 59;
+const SYSCALL_EXIT: usize = 60;
 const SYSCALL_WAIT: usize = 61;
 const SYSCALL_KILL: usize = 62;
 const SYSCALL_SHM_OPEN: usize = 70;
@@ -52,9 +57,16 @@ pub fn sys_write(fd: usize, buffer: &[u8]) -> isize {
     syscall(SYSCALL_WRITE, [fd, buffer.as_ptr() as usize, buffer.len(), 0])
 }
 
-pub fn sys_exit(exit_code: i32) -> ! {
-    syscall(SYSCALL_EXIT, [exit_code as usize, 0, 0, 0]);
-    panic!("sys_exit never returns!");
+pub fn sys_open(name: &str) -> isize {
+    syscall(SYSCALL_OPEN, [name.as_ptr() as usize, 0, 0, 0])
+}
+
+pub fn sys_lseek(fd: usize, seek: usize) -> isize {
+    syscall(SYSCALL_LSEEK, [fd, seek, 0, 0])
+}
+
+pub fn sys_exit(exit_code: i32) -> isize {
+    syscall(SYSCALL_EXIT, [exit_code as usize, 0, 0, 0])
 }
 
 pub fn sys_yield() {
